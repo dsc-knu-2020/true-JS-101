@@ -12,11 +12,9 @@ const densityMap = {
 };
 
 app.get('/density', ({ query }, res) => {
-    console.log(query);
     const density = densityMap[query.substance];
 
     if (density) {
-        console.log(density);
         res.status(200).json(density);
     } else {
         res.sendStatus(404);

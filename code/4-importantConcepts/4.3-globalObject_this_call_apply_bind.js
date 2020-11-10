@@ -4,10 +4,10 @@
 
 
 
-console.log(globalThis); // global object
+console.log('globalThis:', globalThis); // global object
 
 function logThis() {
-    console.log(this);
+    console.log('this in function:', this);
 }
 logThis();
 
@@ -16,13 +16,14 @@ logThis();
 const Ivan = {
     name: 'Ivan',
     surname: 'Ivanov',
-    print() {
+    print(...args) {
+        console.log('args: ', ...args);
         console.log(`Here's Ivan.`);
         console.log(`His name is ${this.name}`);
         console.log(`His surname is ${this.surname}`);
     }
 };
-IvanIvanov.print();
+Ivan.print();
 
 // function doesn't remember where it was created, only where it is called
 const Petro = {
@@ -32,24 +33,24 @@ const Petro = {
 };
 Petro.print();
 
-const { print } = IvanIvanov;
+const { print } = Ivan;
 // here it is called without any context
 print();
 
 
 
 // explicit 'this' specifying
-print.call(IvanIvanov, 'Petro');
-print.apply(IvanIvanov, ['Petro']);
+print.call(Ivan, 'Petro');
+print.apply(Ivan, ['Petro']);
 
-const printWithBindedThis = print.bind(IvanIvanov);
+const printWithBindedThis = print.bind(Ivan);
 printWithBindedThis();
 
 
 
 function createThisLogger() {
     return function() {
-        console.log(this);
+        console.log('this in inner classical function:', this);
     };
 }
 const bindedCreateThisLogger = createThisLogger.bind('this');
@@ -61,7 +62,7 @@ logThis();
 
 function createThisLogger() {
     return () => {
-        console.log(this);
+        console.log('this in inner arrow fn:', this);
     };
 }
 const bindedCreateThisLogger = createThisLogger.bind('this');
