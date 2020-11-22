@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start-mock-server": "node mocks/server.js"
+  },
+  "author": "Andrii Pavlenko <paavlenko.andrew@gmail.com>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  }
+}
