@@ -49,10 +49,9 @@ fetch(getDensityApiUrl('ice'))
             }
         });
     })
-    .then(() => fetch('https://data-storage.io'))
-    .then(response => response.json())
-    .then(({ statusCode }) => {
-        success = statusCode >= 200 && statusCode < 300;
+    .then(() => fetch(someStorageUrl, { method: 'POST' }))
+    .then(({ status }) => {
+        success = status >= 200 && status < 300;
     })
     .then(() => { 
         console.log('success in the last promise:', success);
@@ -61,7 +60,7 @@ console.log('success out of promises chain:', success);
 
 
 
-let success = false;
+success = false;
 fetch(getDensityApiUrl('ice'))
     .then(response => response.ok 
         ? response.json()
@@ -83,14 +82,16 @@ fetch(getDensityApiUrl('ice'))
 
 function fetchData(
     url, 
-    { method = 'GET',  data, errorMessage, onError } = { method: 'GET' }
+    { method = 'GET',  data, errorMessage, onError, parseJSON = true } = { method: 'GET' }
 ) {
     return fetch(url, ...(method === 'GET' ? [] : [{
         body: JSON.stringify(data),
         method: 'POST'
     }]))
         .then(response => response.ok 
-            ? response.json()
+            ? parseJSON
+                ? response.json()
+                : response
             : Promise.reject(errorMessage || `Failed to fetch data: ${response.status} ${response.statusText}`)
         )
         .catch(onError);
@@ -103,7 +104,7 @@ function fetchDensityData(substance) {
 
 
 
-let success = false;
+success = false;
 fetchDensityData('ice')
     .then(iceDensity => {
         somePhysicalData.substance.derivatives.forEach(derivative => {
@@ -129,10 +130,10 @@ fetchDensityData('ice')
             }
         });
 
-        return fetchData(someStorageUrl, { method: 'POST', data: somePhysicalData });
+        return fetchData(someStorageUrl, { method: 'POST', data: somePhysicalData, parseJSON: false });
     })
-    .then(({ statusCode }) => {
-        success = statusCode >= 200 && statusCode < 300;
+    .then(({ status }) => {
+        success = status >= 200 && status < 300;
     })
 
 
@@ -141,13 +142,13 @@ fetchDensityData('ice')
 let a = 2;
 a++;
 
-setTimeout(() => console.log(a), 5000); // 2
+setTimeout(() => console.log('a after 3 sec:', a), 3000); // 2
 
 a--; // but decrement operation will be committed now and here 
 // and hence when we'll try to access `a` in `setTimeout`, we'll get it equal to 2
 // it is because `a--` is a synchronous operation, and setTimeout - is not
 
-console.log(a); // 2 
+console.log('a after decrementation:', a); // 2 
 
 
 
@@ -156,10 +157,9 @@ const delay = ms => new Promise(resolve => {
     setTimeout(resolve, ms);
 });
 
-a = 3;
 delay(5000)
-    .then(() => console.log(a)) // 3
+    .then(() => console.log('a after 5 sec:', a)) // 2
     .then(() => {
         a--;
-        console.log(a); // 2
+        console.log('a after 5 sec and decrementation:', a); // 1
     });

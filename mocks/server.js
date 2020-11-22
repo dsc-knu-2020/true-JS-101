@@ -22,7 +22,7 @@ app.get('/density', ({ query }, res) => {
 });
 
 app.post('/some-storage', (_, res) => {
-    res.status(200).json('ok');
+    res.sendStatus(200);
 });
 
 app.listen(8000);
